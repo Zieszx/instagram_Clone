@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/Screen/sign_In.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:instagram_clone/Screen/sign_up.dart';
+import 'package:instagram_clone/Screen/upload_images.dart';
+import 'package:instagram_clone/Screen/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
