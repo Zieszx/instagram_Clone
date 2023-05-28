@@ -15,7 +15,7 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Feeds'),
+        title: Text('Profile'),
       ),
       body: Center(
         child: Text('Feeds Screen'),
