@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:instagram_clone/Screen/home_screen.dart';
 import 'package:instagram_clone/Screen/profile.dart';
-
+//faruq was here
 class HomeScreen extends StatefulWidget {
   final User? user;
 
@@ -16,11 +15,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> _posts = [];
+  Map<String, dynamic>? userData;
 
   @override
   void initState() {
     super.initState();
     _fetchPosts();
+    _fetchUserData();
   }
 
   Future<void> _fetchPosts() async {
@@ -35,6 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (e) {
       print('Error fetching posts: $e');
+    }
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+          .collection('users')
+          .where('email', isEqualTo: widget.user?.email)
+          .limit(1)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        userData = snapshot.docs.first.data();
+        setState(() {});
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
     }
   }
 
@@ -62,10 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(widget.user?.displayName ?? ''),
+              accountName: Text(userData?['displayName'] ?? ''),
               accountEmail: Text(widget.user?.email ?? ''),
               currentAccountPicture: CircleAvatar(
-                backgroundImage: NetworkImage(widget.user?.photoURL ?? ''),
+                backgroundImage: NetworkImage(userData?['photoURL'] ?? ''),
               ),
             ),
             ListTile(
