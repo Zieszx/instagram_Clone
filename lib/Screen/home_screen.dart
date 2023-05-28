@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:instagram_clone/Screen/feed_screen.dart';
 import 'package:instagram_clone/Screen/profile.dart';
+import 'package:instagram_clone/Screen/upload_images.dart';
+
 //faruq was here
 class HomeScreen extends StatefulWidget {
   final User? user;
@@ -16,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> _posts = [];
   Map<String, dynamic>? userData;
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -52,6 +56,42 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       print('Error fetching user data: $e');
+    }
+  }
+
+  void _onBottomNavigationBarItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Home screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(widget.user),
+          ),
+        );
+        break;
+      case 1:
+        // Upload photos screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UploadImagesScreen(widget.user),
+          ),
+        );
+        break;
+      case 2:
+        // Profile screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FeedScreen(widget.user),
+          ),
+        );
+        break;
     }
   }
 
@@ -109,16 +149,21 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
+        currentIndex: _currentIndex,
         backgroundColor: Colors.lightGreen[50],
+        onTap: _onBottomNavigationBarItemTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.camera_alt),
-            label: 'Camera',
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.nature_people),
-            label: 'Pending',
+            icon: Icon(Icons.add_a_photo_rounded),
+            label: 'Upload Photos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
