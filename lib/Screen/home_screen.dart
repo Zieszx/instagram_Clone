@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:instagram_clone/Screen/profile.dart';
+
 //faruq was here
 class HomeScreen extends StatefulWidget {
   final User? user;
