@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:instagram_clone/Screen/feed_screen.dart';
 import 'package:instagram_clone/Screen/profile.dart';
 import 'package:instagram_clone/Screen/upload_images.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:instagram_clone/Model/Post.dart';
 
-//faruq was here
 class HomeScreen extends StatefulWidget {
   final User? user;
 
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<Map<String, dynamic>> _posts = [];
+  List<FeedModel> _posts = [];
   Map<String, dynamic>? userData;
   int _currentIndex = 0;
 
@@ -32,8 +33,15 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       QuerySnapshot<Map<String, dynamic>> snapshot =
           await _firestore.collection('posts').get();
-      List<Map<String, dynamic>> posts =
-          snapshot.docs.map((doc) => doc.data()).toList();
+      List<FeedModel> posts = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data();
+        return FeedModel(
+          username: data['username'],
+          email: data['email'],
+          caption: data['caption'],
+          postURL: data['postURL'],
+        );
+      }).toList();
 
       setState(() {
         _posts = posts;
@@ -104,13 +112,31 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView.builder(
         itemCount: _posts.length,
         itemBuilder: (context, index) {
-          Map<String, dynamic> post = _posts[index];
+          FeedModel post = _posts[index];
 
-          return ListTile(
-            title: Text(post['caption']),
-            subtitle: Text(post['username']),
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(post['profileImageUrl']),
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 300, // Adjust the desired height of the image
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(post.postURL),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.0),
+                ListTile(
+                  title: Text(
+                    post.username,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(post.caption),
+                ),
+              ],
             ),
           );
         },
