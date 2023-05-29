@@ -130,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           FeedModel post = _posts[index];
 
+<<<<<<< Updated upstream
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 10.0),
             child: Column(
@@ -170,6 +171,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: Text(post.caption),
                 ),
               ],
+=======
+          return ListTile(
+            title: Text(post['caption']),
+            subtitle: Text(post['email']),
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(post['postURL']),
+>>>>>>> Stashed changes
             ),
           );
         },
