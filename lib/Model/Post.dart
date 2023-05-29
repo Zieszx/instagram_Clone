@@ -1,12 +1,14 @@
 class FeedModel {
   final String username;
-  final String email;
+  final email;
   final String caption;
-  final String postURL;
+  final List<String> imageUrls;
+  String? profileImageUrl;
 
-  FeedModel(
-      {required this.username,
-      required this.email,
-      required this.caption,
-      required this.postURL});
+  FeedModel({
+    required this.username,
+    required this.email,
+    required this.caption,
+    required this.imageUrls,
+  });
 }

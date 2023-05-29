@@ -35,13 +35,29 @@ class _HomeScreenState extends State<HomeScreen> {
           await _firestore.collection('posts').get();
       List<FeedModel> posts = snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data();
+        List<dynamic> imageUrls = data['imageUrls']; // Retrieve as dynamic list
+        List<String> convertedImageUrls =
+            List<String>.from(imageUrls); // Convert to List<String>
         return FeedModel(
           username: data['username'],
           email: data['email'],
           caption: data['caption'],
-          postURL: data['postURL'],
+          imageUrls: convertedImageUrls, // Use the converted list
         );
       }).toList();
+
+      // Fetch user data for each post and add the profile image URL
+      for (var post in posts) {
+        QuerySnapshot<Map<String, dynamic>> userSnapshot = await _firestore
+            .collection('users')
+            .where('email', isEqualTo: post.email)
+            .limit(1)
+            .get();
+        if (userSnapshot.docs.isNotEmpty) {
+          Map<String, dynamic> userData = userSnapshot.docs.first.data();
+          post.profileImageUrl = userData['photoURL'];
+        }
+      }
 
       setState(() {
         _posts = posts;
@@ -119,21 +135,38 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 300, // Adjust the desired height of the image
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(post.postURL),
-                      fit: BoxFit.cover,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        post.profileImageUrl ?? '', // Profile image URL
+                      ),
                     ),
+                    SizedBox(width: 10.0),
+                    Text(
+                      post.username,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Container(
+                  height: 250, // Adjust the desired height of the container
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: post.imageUrls.map((imageUrl) {
+                      return CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      );
+                    }).toList(),
                   ),
                 ),
-                SizedBox(height: 10.0),
+                SizedBox(height: 5),
                 ListTile(
-                  title: Text(
-                    post.username,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
                   subtitle: Text(post.caption),
                 ),
               ],
