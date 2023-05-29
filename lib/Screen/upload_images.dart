@@ -8,6 +8,7 @@ import 'package:instagram_clone/Screen/home_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/components/my_button.dart';
 import 'package:instagram_clone/components/my_textfield.dart';
+import 'package:instagram_clone/Model/Post.dart';
 
 class UploadImagesScreen extends StatefulWidget {
   final User? user;
@@ -22,7 +23,6 @@ class _UploadImagesScreenState extends State<UploadImagesScreen> {
   final TextEditingController _captionController = TextEditingController();
   List<File> _selectedImages = [];
   Map<String, dynamic>? userData;
-  String email = "";
 
   Future<void> _fetchUserData() async {
     try {
@@ -43,20 +43,11 @@ class _UploadImagesScreenState extends State<UploadImagesScreen> {
   Future<void> _selectImages() async {
     try {
       final String caption = _captionController.text.trim();
-      final String email = userData?["email"];
-      final String username = userData?["username"];
+      final String username = userData?["username"] ?? "";
+      final email = widget.user?.email;
+
       final imagePicker = ImagePicker();
       final pickedImages = await imagePicker.pickMultiImage();
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.user!.uid)
-          .set({
-        'username': username,
-        'email': email,
-        'caption': caption,
-        'photoURL': '',
-      });
 
       if (pickedImages != null) {
         setState(() {
@@ -74,6 +65,11 @@ class _UploadImagesScreenState extends State<UploadImagesScreen> {
 
   Future<void> _uploadImagesAndNavigate() async {
     try {
+      if (_selectedImages.isEmpty) {
+        print('No images selected.');
+        return;
+      }
+
       // Upload images to Firebase Storage
       List<String> imageUrls = [];
       for (File imageFile in _selectedImages) {
@@ -88,12 +84,24 @@ class _UploadImagesScreenState extends State<UploadImagesScreen> {
 
       // Save image URLs and caption to Firestore
       final String caption = _captionController.text.trim();
-      await FirebaseFirestore.instance.collection('posts').doc().set({
-        'username': userData?['username'],
-        'email': userData?['email'],
-        'caption': caption,
-        'photoURLs': imageUrls,
-      });
+      final String username = userData?["username"] ?? "";
+      final email = widget.user?.email;
+      FeedModel feedModel = FeedModel(
+        username: username,
+        email: email,
+        caption: caption,
+        imageUrls: imageUrls,
+      );
+
+      // Convert the feedModel to a Map for Firestore
+      Map<String, dynamic> feedData = {
+        'username': feedModel.username,
+        'email': feedModel.email,
+        'caption': feedModel.caption,
+        'imageUrls': feedModel.imageUrls,
+      };
+
+      await FirebaseFirestore.instance.collection('posts').add(feedData);
 
       // Navigate to home screen
       Navigator.push(
