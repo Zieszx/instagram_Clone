@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:instagram_clone/Screen/home_screen.dart';
 import 'package:instagram_clone/Screen/profile.dart';
 
 class HomeScreen extends StatefulWidget {

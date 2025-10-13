@@ -61,66 +61,171 @@ lib/
 
 ### Prerequisites
 
-- Flutter SDK (>=2.19.6)
-- Dart SDK
-- Android Studio / VS Code
-- Firebase account
-- Android/iOS device or emulator
+- **Windows 10/11** with Developer Mode enabled
+- **Flutter SDK 3.24.5** or later
+- **Android Studio** 2025.1.4 or later
+- **Java Development Kit (JDK)** 21 (comes with Android Studio)
+- **Firebase account** for backend services
+- **Git** for version control
 
-### Installation
+### Step-by-Step Installation Guide
 
-1. **Clone the repository**
+#### 1. **Enable Windows Developer Mode**
+   ```powershell
+   # Run this command to open Developer Settings
+   start ms-settings:developers
+   ```
+   - In Settings, go to "For developers"
+   - Toggle "Developer Mode" to ON
+   - This enables symlink support required by Flutter plugins
 
+#### 2. **Install Flutter SDK**
+   ```powershell
+   # Create Flutter directory
+   New-Item -ItemType Directory -Path "C:\flutter" -Force
+   
+   # Download Flutter SDK (automatically done by setup script)
+   # Flutter will be installed at C:\flutter
+   ```
+
+   **Add Flutter to PATH:**
+   - Open System Environment Variables
+   - Add `C:\flutter\bin` to your PATH
+   - Restart your terminal
+
+#### 3. **Verify Installation**
+   ```bash
+   flutter doctor
+   ```
+   Ensure all checkmarks are green, especially:
+   - ✅ Flutter SDK
+   - ✅ Android toolchain
+   - ✅ Android Studio
+
+#### 4. **Clone and Setup Project**
    ```bash
    git clone <repository-url>
    cd instagram_Clone
-   ```
-
-2. **Install dependencies**
-
-   ```bash
+   
+   # Install Flutter dependencies
    flutter pub get
    ```
 
-3. **Firebase Setup**
+#### 5. **Android Studio Setup**
+   - Open Android Studio
+   - Install Flutter and Dart plugins:
+     - Go to File → Settings → Plugins
+     - Search and install "Flutter" plugin
+     - This will also install the Dart plugin
 
-   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Enable Authentication (Email/Password method)
-   - Create a Firestore database
-   - Enable Firebase Storage
-   - Download `google-services.json` and place it in `android/app/`
-   - Download `GoogleService-Info.plist` for iOS (if targeting iOS)
-
-4. **Configure Firebase Collections**
-
-   Create these Firestore collections:
-
-   **users collection:**
-
-   ```json
-   {
-     "displayName": "User Name",
-     "username": "username",
-     "email": "user@example.com",
-     "photoURL": "profile_image_url"
-   }
-   ```
-
-   **posts collection:**
-
-   ```json
-   {
-     "caption": "Post caption",
-     "username": "poster_username",
-     "profileImageUrl": "profile_image_url",
-     "timestamp": "post_timestamp"
-   }
-   ```
-
-5. **Run the app**
+#### 6. **Create Android Virtual Device (AVD)**
    ```bash
+   # List available emulators
+   flutter emulators
+   
+   # Launch emulator (if available)
+   flutter emulators --launch <emulator_id>
+   
+   # Or create a new one in Android Studio:
+   # Tools → AVD Manager → Create Virtual Device
+   ```
+
+#### 7. **Firebase Configuration**
+
+   **A. Create Firebase Project:**
+   - Visit [Firebase Console](https://console.firebase.google.com/)
+   - Create new project or use existing
+   - Enable the following services:
+     - 🔐 Authentication (Email/Password)
+     - 🗄️ Cloud Firestore Database  
+     - 📁 Cloud Storage
+     - 🎯 Realtime Database (optional)
+
+   **B. Add Android App:**
+   - In Firebase Console, click "Add app" → Android
+   - Use package name: `com.example.instagram_clone`
+   - Download `google-services.json`
+   - Place it in `android/app/google-services.json`
+
+   **C. Configure Firestore Collections:**
+   Create these collections in Firestore:
+
+   ```javascript
+   // Collection: users
+   {
+     "displayName": "John Doe",
+     "username": "johndoe123", 
+     "email": "john@example.com",
+     "photoURL": "https://example.com/profile.jpg"
+   }
+   
+   // Collection: posts  
+   {
+     "caption": "My awesome post!",
+     "username": "johndoe123",
+     "profileImageUrl": "https://example.com/profile.jpg",
+     "timestamp": "2025-01-13T10:30:00Z"
+   }
+   ```
+
+#### 8. **Run the Application**
+   ```bash
+   # Check connected devices
+   flutter devices
+   
+   # Run on Android emulator
+   flutter run -d <device_id>
+   
+   # Or run on all available devices
    flutter run
    ```
+
+### 🔧 Troubleshooting
+
+#### Common Issues and Solutions:
+
+**1. Java/Gradle Compatibility Issues:**
+```bash
+# If you get Gradle compatibility errors:
+flutter clean
+flutter pub get
+
+# Ensure you're using compatible versions:
+# Java 21 + Gradle 8.4+ + Android Gradle Plugin 8.1.4+
+```
+
+**2. Developer Mode Not Enabled:**
+```powershell
+# Enable Developer Mode
+start ms-settings:developers
+# Toggle "Developer Mode" to ON
+```
+
+**3. Android Licenses Not Accepted:**
+```bash
+# Accept all Android SDK licenses
+flutter doctor --android-licenses
+# Type 'y' for all prompts
+```
+
+**4. Emulator Not Starting:**
+```bash
+# List available emulators
+flutter emulators
+
+# Create new emulator if none exists
+flutter emulators --create
+
+# Or use Android Studio: Tools → AVD Manager
+```
+
+**5. Build Failures:**
+```bash
+# Clean and rebuild
+flutter clean
+flutter pub get
+flutter build apk --debug
+```
 
 ## 📱 App Flow
 
@@ -202,12 +307,76 @@ dependencies:
 - [ ] Image filters and editing
 - [ ] Dark mode support
 
-## 🐛 Known Issues
+### 🔄 Development Workflow
 
+```bash
+# Daily development routine
+1. Pull latest changes: git pull origin main
+2. Check Flutter setup: flutter doctor
+3. Get dependencies: flutter pub get
+4. Run app: flutter run -d <device_id>
+5. Hot reload: Press 'r' in terminal during development
+6. Hot restart: Press 'R' in terminal
+7. Quit: Press 'q' in terminal
+```
+
+### 📊 Project Status
+
+#### ✅ Completed Features:
+- [x] Flutter environment setup
+- [x] Firebase integration configuration  
+- [x] User authentication (Sign In/Sign Up)
+- [x] Custom UI components (buttons, text fields)
+- [x] Navigation between screens
+- [x] Profile image upload capability
+- [x] Firestore database integration
+- [x] Home feed structure
+- [x] Drawer navigation
+
+#### 🚧 In Progress:
+- [ ] Java/Gradle compatibility optimization
+- [ ] Image picker functionality refinement
+- [ ] Build configuration improvements
+
+#### 📋 Pending Features:
+- [ ] Post creation and upload
+- [ ] Image filtering and editing
+- [ ] Like and comment functionality
+- [ ] Real-time feed updates
+- [ ] Search functionality
+- [ ] Follow/Unfollow system
+- [ ] Push notifications
+- [ ] Story functionality
+- [ ] Direct messaging
+- [ ] Dark mode support
+
+### 🎯 Next Steps for Development
+
+1. **Resolve Build Issues**: Fix Java 21/Gradle compatibility
+2. **Enable Developer Mode**: For Windows symlink support
+3. **Test Basic App**: Ensure sign-in/sign-up works
+4. **Implement Image Upload**: Complete post creation flow
+5. **Add Social Features**: Like, comment, follow system
+
+## 🐛 Known Issues & Limitations
+
+### Current Technical Issues:
+- **Java/Gradle Compatibility**: Project requires Java 21 compatible Gradle setup
+- **Windows Developer Mode**: Must be enabled for symlink support
+- **Image Picker**: Web platform compatibility issues
+- **Build Configuration**: Some Firebase plugins need buildConfig enabled
+
+### Feature Limitations:
 - Search screen is placeholder (needs implementation)
-- Upload images functionality needs completion
+- Upload images functionality needs completion  
 - Social login buttons need backend integration
 - Profile screen needs user data display
+- Real-time updates not implemented
+
+### Workarounds:
+- Enable Windows Developer Mode before running
+- Use Android emulator instead of web for testing
+- Accept all Android licenses using `flutter doctor --android-licenses`
 
 ## 📄 License
 

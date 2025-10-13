@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instagram_clone/Screen/home_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:instagram_clone/components/my_button.dart';
 import 'package:instagram_clone/components/my_textfield.dart';
 import 'package:instagram_clone/components/square_tile.dart';

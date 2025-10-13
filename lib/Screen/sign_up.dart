@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:instagram_clone/Screen/home_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/components/my_button.dart';
@@ -92,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: ImageSource.gallery);
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickedImage != null) {
         _profileImage = File(pickedImage.path);
@@ -103,7 +102,6 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
-    Firebase.initializeApp();
   }
 
   @override
@@ -182,10 +180,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(
-                            context, '/signup'); // Navigate to sign-up page
+                            context, '/'); // Navigate back to sign-in page
                       },
                       child: Text(
-                        'Sign Up',
+                        'Sign In',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
